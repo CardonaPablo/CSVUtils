@@ -1,0 +1,5 @@
+/.venv
+/__pycache__
+/exports
+/user_data_combinado.csv
+/user_data_errores.csv
