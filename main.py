@@ -5,6 +5,8 @@ from combinar_csv import combinar_csv
 import os
 import json
 import pandas as pd
+from exportar_archivo import exportar_archivo
+from menu_utils import obtener_respuesta_valida
 
 field_to_idx = { 'id': 0, 'first_name': 1, 'last_name': 2, 'email': 3 }
 idx_to_field = { '1': 'id', '2': 'first_name', '3': 'last_name', '4': 'email' }
@@ -68,8 +70,7 @@ def crear_copia_csv(df, nombre_archivo):
     copia_nombre_archivo = 'sources/' + nombre_archivo
     df.to_csv(copia_nombre_archivo, index=False)
 
-
-def load_csv():
+def cargar_archivo_inicial():
     global verbose
     user_data = procesar_csv('user_data.csv')
     if(verbose):
@@ -130,42 +131,54 @@ def buscar_por_multiples(user_data, queries):
                 return pd.DataFrame()  # Return empty DataFrame if the value is invalid
     return usuarios
 
+def mostrar_menu_principal():
+    os.system('clear')
+    print("Registros cargados: ", len(user_data))
+    print("*********************")
+    print("Menú principal")
+    return obtener_respuesta_valida('', {
+        '1': 'Buscar por múltiples campos',
+        '2': 'Exportar archivo',
+        '3': 'Salir'
+    })
+
+def mostrar_menu_busqueda():
+    os.system('clear')
+    print("Bienvenido al buscador de usuarios")
+
+    primer_campo = mostrar_interfaz_elegir_campo()
+    primer_valor = input("Ingrese la query para primer campo: ")
+
+    segundo_campo = mostrar_interfaz_elegir_campo()
+    segundo_valor = input("Ingrese la query para segundo campo: ")
+
+    queries = []
+    queries.append({
+        'campo': primer_campo, 
+        'valor': primer_valor
+    })
+    queries.append({
+        'campo': segundo_campo, 
+        'valor': segundo_valor
+    })
+
+    resultados = buscar_por_multiples(user_data, queries)
+    if not resultados.empty:
+        print("Resultados encontrados:")
+        print(resultados)
+    else:
+        print("No se encontraron usuarios")
+    print()
+    print("Pulse cualquier tecla para continuar")
+    input()
 
 if __name__  == "__main__": 
-    user_data = load_csv()
+    user_data = cargar_archivo_inicial()
     while True:
-        os.system('clear')
-        print("Registros cargados: ", len(user_data))
-        print("*********************")
-        print("Bienvenido al buscador de usuarios")
-
-        primer_campo = mostrar_interfaz_elegir_campo()
-        primer_valor = input("Ingrese la query para primer campo: ")
-
-        segundo_campo = mostrar_interfaz_elegir_campo()
-        segundo_valor = input("Ingrese la query para segundo campo: ")
-
-        queries = []
-        queries.append({
-            'campo': primer_campo, 
-            'valor': primer_valor
-        })
-        queries.append({
-            'campo': segundo_campo, 
-            'valor': segundo_valor
-        })
-
-        resultados = buscar_por_multiples(user_data, queries)
-        if not resultados.empty:
-            print("Resultados encontrados:")
-            print(resultados)
-        else:
-            print("No se encontraron usuarios")
-        print()
-        print("Pulse 5 para salir")
-        print("Pulse cualquier otra tecla para continuar")
-        final_seleccion = input()
-        if(final_seleccion == '5'):
+        opcion_seleccionada = mostrar_menu_principal()
+        if(opcion_seleccionada == '1'):
+            mostrar_menu_busqueda()
+        elif(opcion_seleccionada == '2'):
+            exportar_archivo('user_data')
+        elif(opcion_seleccionada == '3'):
             break
-
-
