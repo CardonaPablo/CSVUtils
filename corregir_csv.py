@@ -1,5 +1,5 @@
 from cargar_csv import cargar_csv
-from menu_utils import obtener_respuesta_valida
+from menu_utils import crear_menu_de_opciones
 from corregir_registro_csv import corregir_registro_csv
 import pandas as pd
 
@@ -16,18 +16,18 @@ def corregir_registros(incorrectos):
     
     return pd.DataFrame(registros_corregidos)
 
-def mostrar_menu_corregir():
-    return obtener_respuesta_valida("Desea corregir los registros afectados?", {'1': 'Si', '2': 'No'})
+def mostrar_menu_corregir(n_registros_incorrectos):
+    return crear_menu_de_opciones(f"Se encontraron {n_registros_incorrectos} registros incorrectos.\nDesea corregir los registros afectados?", {'1': 'Si', '2': 'No'})
 
 def corregir_csv(ruta_archivo):
     df_errores, _ = cargar_csv(ruta_archivo, validar=False)
-    print(f"Se encontraron {len(df_errores)} registros incorrectos.")
+    print()
     if len(df_errores) == 0:
         print("No hay registros incorrectos.")
         input("Presione Enter para continuar...")
         return
     
-    respuesta = mostrar_menu_corregir()
+    respuesta = mostrar_menu_corregir(len(df_errores))
     if respuesta == '1':
        return corregir_registros(df_errores)
 

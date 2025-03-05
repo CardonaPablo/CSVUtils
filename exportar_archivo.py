@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 import json
-from menu_utils import obtener_respuesta_valida
+from menu_utils import crear_menu_de_opciones
 
 def cargar_archivo(formato, filename):
     # Definir rutas de archivos según el formato de origen
@@ -68,7 +68,7 @@ def exportar_a_xml(df, ruta_salida):
 def menu_formato_origen():
     """Muestra el menú para seleccionar el formato de origen."""
     opciones = {'1': 'CSV', '2': 'JSON', '3': 'XML'}
-    respuesta = obtener_respuesta_valida("Seleccione el formato de origen:", opciones)
+    respuesta = crear_menu_de_opciones("Seleccione el formato de origen:", opciones)
     return opciones[respuesta]
 
 def menu_formato_destino(formato_origen):
@@ -78,7 +78,7 @@ def menu_formato_destino(formato_origen):
     del formatos[formato_origen]
     
     opciones = {valor: clave for clave, valor in formatos.items()}
-    respuesta = obtener_respuesta_valida("Seleccione el formato de destino:", opciones)
+    respuesta = crear_menu_de_opciones("Seleccione el formato de destino:", opciones)
     return opciones[respuesta]
 
 def exportar_archivo(filename):
